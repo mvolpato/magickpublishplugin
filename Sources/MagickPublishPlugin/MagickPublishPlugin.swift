@@ -5,7 +5,7 @@
  */
 
 import Publish
-import Foundation
+import ShellOut
 
 public extension Plugin {
 
@@ -19,34 +19,16 @@ public extension Plugin {
                        arguments: [String],
                        imageFile file: Path) -> Self {
         Plugin(name: "Magick custom command for \(file)") { context in
-            let task = Process()
-            if #available(OSX 10.13, *) {
-
-                task.executableURL = URL(fileURLWithPath: "\(executablePath)/magick")
-
-                guard let contextPath = try? context.file(at: file) else {
-                    fputs("Cannot find file.\n", stdout)
-                    return
-                }
-
-                task.arguments = arguments + [contextPath.path]
-
-                do {
-                    try task.run()
-                } catch {
-                    fputs("Error while running magick.\n", stdout)
-                    return
-                }
-
-                task.waitUntilExit()
-                let status = task.terminationStatus
-
-                if status != 0 {
-                    fputs("Magick process failed.\n", stdout)
-                }
-
-            } else {
-                fputs("Cannot run magick, you need macOS 10.13+\n", stdout)
+            guard let contextPath = try? context.file(at: file) else {
+                print("Cannot find file.")
+                return
+            }
+            do {
+                try shellOut(to: "\(executablePath)/magick \(arguments.joined(separator: " ")) \(contextPath.path)")
+            } catch {
+                let error = error as! ShellOutError
+                print(error.message)
+                print(error.output)
             }
         }
     }
@@ -61,34 +43,16 @@ public extension Plugin {
                        arguments: [String],
                        imagesFolder folder: Path) -> Self {
         Plugin(name: "Magick custom command at \(folder)") { context in
-            let task = Process()
-            if #available(OSX 10.13, *) {
-
-                task.executableURL = URL(fileURLWithPath: "\(executablePath)/magick")
-
-                guard let contextPath = try? context.folder(at: folder) else {
-                    fputs("Cannot find folder.\n", stdout)
-                    return
-                }
-
-                task.arguments = arguments + ["\(contextPath.path)*.*"]
-
-                do {
-                    try task.run()
-                } catch {
-                    fputs("Error while running magick.\n", stdout)
-                    return
-                }
-
-                task.waitUntilExit()
-                let status = task.terminationStatus
-
-                if status != 0 {
-                    fputs("Magick process failed.\n", stdout)
-                }
-
-            } else {
-                fputs("Cannot run magick, you need macOS 10.13+\n", stdout)
+            guard let contextPath = try? context.folder(at: folder) else {
+                print("Cannot find folder.")
+                return
+            }
+            do {
+                try shellOut(to: "\(executablePath)/magick \(arguments.joined(separator: " ")) \(contextPath.path)*.*")
+            } catch {
+                let error = error as! ShellOutError
+                print(error.message)
+                print(error.output)
             }
         }
     }
@@ -100,64 +64,48 @@ public extension Plugin {
     /// - Parameter folder: the path to the folder, this will be appended to the argument list.
     static func optimizeForWeb(imagesInFolder folder: Path) -> Self {
         Plugin(name: "Magick optimize for web at \(folder)") { context in
-            let task = Process()
-            if #available(OSX 10.13, *) {
+            guard let contextPath = try? context.folder(at: folder) else {
+                print("Cannot find folder.")
+                return
+            }
 
-                task.executableURL = URL(fileURLWithPath: "/usr/local/bin/magick")
+            let arguments = [
+                "mogrify",
+                "-filter",
+                "Triangle",
+                "-define",
+                "filter:support=2",
+                "-unsharp",
+                "0.25x0.25+8+0.065",
+                "-dither",
+                "None",
+                "-posterize",
+                "136",
+                "-quality",
+                "82",
+                "-define",
+                "jpeg:fancy-upsampling=off",
+                "-define",
+                "png:compression-filter=5",
+                "-define",
+                "png:compression-level=9",
+                "-define",
+                "png:compression-strategy=1",
+                "-define",
+                "png:exclude-chunk=all",
+                "-interlace",
+                "none",
+                "-colorspace",
+                "sRGB",
+                "-strip",
+                "\(contextPath.path)*.*"]
 
-                guard let contextPath = try? context.folder(at: folder) else {
-                    fputs("Cannot find folder.\n", stdout)
-                    return
-                }
-
-                task.arguments = [
-                    "mogrify",
-                    "-filter",
-                    "Triangle",
-                    "-define",
-                    "filter:support=2",
-                    "-unsharp",
-                    "0.25x0.25+8+0.065",
-                    "-dither",
-                    "None",
-                    "-posterize",
-                    "136",
-                    "-quality",
-                    "82",
-                    "-define",
-                    "jpeg:fancy-upsampling=off",
-                    "-define",
-                    "png:compression-filter=5",
-                    "-define",
-                    "png:compression-level=9",
-                    "-define",
-                    "png:compression-strategy=1",
-                    "-define",
-                    "png:exclude-chunk=all",
-                    "-interlace",
-                    "none",
-                    "-colorspace",
-                    "sRGB",
-                    "-strip",
-                    "\(contextPath.path)*.*"
-                ]
-
-                do {
-                    try task.run()
-                } catch {
-                    fputs("Error while running magick mogrify.\n", stdout)
-                    return
-                }
-
-                task.waitUntilExit()
-                let status = task.terminationStatus
-
-                if status != 0 {
-                    fputs("Resizing failed.\n", stdout)
-                }
-
-            } else {
-                fputs("Cannot resize images, you need macOS 10.13+\n", stdout)
+            do {
+                try shellOut(to: "/usr/local/bin/magick \(arguments.joined(separator: " "))")
+            } catch {
+                let error = error as! ShellOutError
+                print(error.message)
+                print(error.output)
             }
         }
     }

@@ -16,12 +16,13 @@ let package = Package(
             targets: ["MagickPublishPlugin"]),
     ],
     dependencies: [
-        .package(name: "Publish", url: "https://github.com/johnsundell/publish.git", from: "0.5.0")
+        .package(name: "Publish", url: "https://github.com/johnsundell/publish.git", from: "0.5.0"),
+        .package(name: "ShellOut", url: "https://github.com/johnsundell/shellout.git", from: "2.3.0")
     ],
     targets: [
         .target(
             name: "MagickPublishPlugin",
-            dependencies: ["Publish"]),
+            dependencies: ["ShellOut", "Publish"]),
         .testTarget(
             name: "MagickPublishPluginTests",
             dependencies: ["MagickPublishPlugin"]),

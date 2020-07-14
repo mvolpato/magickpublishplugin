@@ -12,7 +12,7 @@ let package = Package(
     ...
     dependencies: [
         ...
-        .package(url: "https://github.com/mvolpato/magickpublishplugin", from: "0.1.0")
+        .package(url: "https://github.com/mvolpato/magickpublishplugin", from: "0.2.0")
     ],
     targets: [
         .target(
@@ -50,7 +50,7 @@ import MagickPublishPlugin
 ...
 try DeliciousRecipes().publish(using: [
 ...
-.installPlugin(.optimizeForWeb(imagesInFolder: "output/assets/images/blog/"))
+.installPlugin(.optimizeForWeb(imagesInFolder: "Output/assets/images/blog/"))
 ...
 ])
 ```
@@ -71,7 +71,7 @@ try DeliciousRecipes().publish(using: [
                 "-thumbnail",
                 "400",
             ], 
-            imagesFolder: "output/assets/images/blog/")
+            imagesFolder: "Output/assets/images/blog/")
 )
 ...
 ])
@@ -91,7 +91,7 @@ try DeliciousRecipes().publish(using: [
                 "-thumbnail",
                 "400",
                 ], 
-                imageFile: "output/assets/images/blog/my-cat-eating-a-burrito.jpg")
+                imageFile: "Output/assets/images/blog/my-cat-eating-a-burrito.jpg")
 )
 ...
 ])
