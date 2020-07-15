@@ -12,11 +12,9 @@ public extension Plugin {
     /// Runs a ImageMagick `magick` command on a single file.
     ///
     /// - Parameters:
-    ///   - executablePath: the path to the magick executable. Default to `/usr/local/bin`.
     ///   - arguments: the arguments for the magick command, one element for each argument.
     ///   - file: the path to the file, this will be appended to the argument list.
-    static func magick(executablePath: String = "/usr/local/bin",
-                       arguments: [String],
+    static func magick(arguments: [String],
                        imageFile file: Path) -> Self {
         Plugin(name: "Magick custom command for \(file)") { context in
             guard let contextPath = try? context.file(at: file) else {
@@ -24,7 +22,7 @@ public extension Plugin {
                 return
             }
             do {
-                try shellOut(to: "\(executablePath)/magick \(arguments.joined(separator: " ")) \(contextPath.path)")
+                try shellOut(to: "\(arguments.joined(separator: " ")) \(contextPath.path)")
             } catch {
                 let error = error as! ShellOutError
                 print(error.message)
@@ -36,11 +34,9 @@ public extension Plugin {
     /// Runs a ImageMagick `magick` command on all files in a folder.
     ///
     /// - Parameters:
-    ///   - executablePath: the path to the magick executable. Default to `/usr/local/bin`.
     ///   - arguments: the arguments for the magick command, one element for each argument.
     ///   - folder: the path to the folder, this will be appended to the argument list.
-    static func magick(executablePath: String = "/usr/local/bin",
-                       arguments: [String],
+    static func magick(arguments: [String],
                        imagesFolder folder: Path) -> Self {
         Plugin(name: "Magick custom command at \(folder)") { context in
             guard let contextPath = try? context.folder(at: folder) else {
@@ -48,7 +44,7 @@ public extension Plugin {
                 return
             }
             do {
-                try shellOut(to: "\(executablePath)/magick \(arguments.joined(separator: " ")) \(contextPath.path)*.*")
+                try shellOut(to: "\(arguments.joined(separator: " ")) \(contextPath.path)*.*")
             } catch {
                 let error = error as! ShellOutError
                 print(error.message)
@@ -70,7 +66,6 @@ public extension Plugin {
             }
 
             let arguments = [
-                "mogrify",
                 "-filter",
                 "Triangle",
                 "-define",
@@ -101,7 +96,7 @@ public extension Plugin {
                 "\(contextPath.path)*.*"]
 
             do {
-                try shellOut(to: "/usr/local/bin/magick \(arguments.joined(separator: " "))")
+                try shellOut(to: "mogrify \(arguments.joined(separator: " "))")
             } catch {
                 let error = error as! ShellOutError
                 print(error.message)

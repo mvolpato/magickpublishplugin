@@ -12,7 +12,7 @@ let package = Package(
     ...
     dependencies: [
         ...
-        .package(url: "https://github.com/mvolpato/magickpublishplugin", from: "0.2.0")
+        .package(url: "https://github.com/mvolpato/magickpublishplugin", from: "0.3.0")
     ],
     targets: [
         .target(
@@ -65,8 +65,7 @@ import MagickPublishPlugin
 try DeliciousRecipes().publish(using: [
 .installPlugin(
 ...
-    .magick(executablePath: "/usr/local/bin", 
-            arguments: [
+    .magick(arguments: [
                 "mogrify",
                 "-thumbnail",
                 "400",
@@ -85,8 +84,7 @@ import MagickPublishPlugin
 try DeliciousRecipes().publish(using: [
 .installPlugin(
 ...
-    .magick(executablePath: "/usr/local/bin", 
-            arguments: [
+    .magick(arguments: [
                 "mogrify",
                 "-thumbnail",
                 "400",
