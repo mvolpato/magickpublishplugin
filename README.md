@@ -37,11 +37,9 @@ For more information on how to use the Swift Package Manager, check out [this ar
 
 ## Usage
 
-You need ImageMagick first
+You need ImageMagick version 6 to use the `optimizeForWeb(imagesInFolder: String)` method.
 
-```
-brew install imagemagick
-```
+You can use other methods with version 7.
 
 The plugin can then be used within any publishing pipeline like this:
 
