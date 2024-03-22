@@ -27,7 +27,7 @@ let package = Package(
 )
 ```
 
-Then import SplashPublishPlugin wherever you’d like to use it:
+Then import MagickPublishPlugin wherever you’d like to use it:
 
 ```swift
 import MagickPublishPlugin
